@@ -47,7 +47,7 @@ DEFINE_EVENT(mtk_pm_qos_request, mtk_pm_qos_update_request,
 
 #undef TRACE_INCLUDE_FILE
 #undef TRACE_INCLUDE_PATH
-#define TRACE_INCLUDE_PATH .
+#define TRACE_INCLUDE_PATH ../../drivers/regulator
 #define TRACE_INCLUDE_FILE mtk-vmm-trace
 
 /* This part must be outside protection */
