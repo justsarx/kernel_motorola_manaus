@@ -14,7 +14,6 @@
 
 #include "wm_adsp.h"
 #include "cs35l45.h"
-#include <sound/cs35l45.h>
 
 /*mtk_spk_type register*/
 #include <mtk-sp-spk-amp.h>

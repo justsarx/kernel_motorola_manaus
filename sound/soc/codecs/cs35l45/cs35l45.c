@@ -21,7 +21,6 @@
 
 #include "wm_adsp.h"
 #include "cs35l45.h"
-#include <sound/cs35l45.h>
 
 #define DRV_NAME "cs35l45"
 #include <mtk-sp-spk-amp.h>

@@ -35,13 +35,13 @@
 #include <asm/barrier.h>
 #include <soc/mediatek/smi.h>
 #if IS_ENABLED(CONFIG_MTK_SMI)
-#include <../misc/mediatek/smi/mtk-smi-dbg.h>
+#include "../misc/mediatek/smi/mtk-smi-dbg.h"
 #endif
 #if IS_ENABLED(CONFIG_MTK_IOMMU_MISC_DBG)
-#include <../misc/mediatek/iommu/iommu_debug.h>
+#include "../misc/mediatek/iommu/iommu_debug.h"
 #endif
 #if IS_ENABLED(CONFIG_MTK_IOMMU_MISC_SECURE)
-#include <../misc/mediatek/iommu/iommu_secure.h>
+#include "../misc/mediatek/iommu/iommu_secure.h"
 #endif
 
 #include "mtk_iommu.h"
