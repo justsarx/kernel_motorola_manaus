@@ -14,3 +14,10 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
 dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-evb.dtb
 dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-krane-sku176.dtb
 dtb-$(CONFIG_ARCH_MEDIATEK) += mt8516-pumpkin.dtb
+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6879.dtb
+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6879-manaus-docomo-evt1-overlay.dtbo
+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6879-manaus-evb-overlay.dtbo
+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6879-manaus-dvt1-overlay.dtbo
+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6879-manaus-dvt1a-overlay.dtbo
+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6879-manaus-dvt2-overlay.dtbo
+
