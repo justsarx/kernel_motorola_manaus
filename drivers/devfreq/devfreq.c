@@ -1179,7 +1179,7 @@ int devfreq_set_min_freq(struct devfreq *devfreq, unsigned long min_freq)
 	mutex_lock(&devfreq->lock);
 
 	if (min_freq) {
-		if (devfreq->scaling_max_freq && min_freq > devfreq->scaling_max_freq) {
+		if (min_freq > devfreq->max_freq) {
 			ret = -EINVAL;
 			goto unlock;
 		}
@@ -1191,7 +1191,7 @@ int devfreq_set_min_freq(struct devfreq *devfreq, unsigned long min_freq)
 		}
 	}
 
-	devfreq->scaling_min_freq = min_freq;
+	devfreq->min_freq = min_freq;
 	ret = update_devfreq(devfreq);
 unlock:
 	mutex_unlock(&devfreq->lock);
