@@ -6,7 +6,6 @@
 #if !defined(_TRACE_HOOK_FS_H) || defined(TRACE_HEADER_MULTI_READ)
 #define _TRACE_HOOK_FS_H
 #include <linux/tracepoint.h>
-#include <linux/types.h>
 #include <trace/hooks/vendor_hooks.h>
 
 struct file;
@@ -23,6 +22,7 @@ DECLARE_HOOK(android_vh_iolimit_rw,
 		 unsigned int *delay_ms),
 	TP_ARGS(file, count, rw, delay_ms));
 
+#endif /* _TRACE_HOOK_FS_H */
 
-#endif
+/* This part must be outside protection */
 #include <trace/define_trace.h>

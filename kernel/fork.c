@@ -108,8 +108,6 @@
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/task.h>
-EXPORT_TRACEPOINT_SYMBOL_GPL(task_newtask);
-EXPORT_TRACEPOINT_SYMBOL_GPL(task_rename);
 #undef CREATE_TRACE_POINTS
 
 #include <trace/hooks/sched.h>
