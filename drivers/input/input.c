@@ -23,7 +23,9 @@
 #include <linux/device.h>
 #include <linux/mutex.h>
 #include <linux/rcupdate.h>
+#include <trace/hooks/input.h>
 #include "input-compat.h"
+
 #include "input-poller.h"
 
 MODULE_AUTHOR("Vojtech Pavlik <vojtech@suse.cz>");
@@ -380,7 +382,12 @@ static void input_handle_event(struct input_dev *dev,
 {
 	int disposition = input_get_disposition(dev, type, code, &value);
 
+	if (disposition != INPUT_IGNORE_EVENT && type == EV_SYN &&
+	    code == SYN_REPORT)
+		trace_android_vh_input_sync(dev);
+
 	if (disposition != INPUT_IGNORE_EVENT && type != EV_SYN)
+
 		add_input_randomness(type, code, value);
 
 	if ((disposition & INPUT_PASS_TO_DEVICE) && dev->event)

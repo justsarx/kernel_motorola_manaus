@@ -24,6 +24,23 @@
 
 #include <linux/uaccess.h>
 #include <asm/unistd.h>
+#include <linux/jiffies.h>
+#include <linux/sched.h>
+#include <trace/hooks/fs.h>
+
+static void android_vh_iolimit_rw_delay(struct file *file, size_t count, int rw)
+{
+	unsigned int delay_ms = 0;
+	unsigned long timeout;
+
+	trace_android_vh_iolimit_rw(file, count, rw, &delay_ms);
+	if (!delay_ms)
+		return;
+
+	timeout = msecs_to_jiffies(delay_ms);
+	schedule_timeout_interruptible(max_t(unsigned long, timeout, 1));
+}
+
 
 const struct file_operations generic_ro_fops = {
 	.llseek		= generic_file_llseek,
@@ -490,6 +507,9 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 	if (count > MAX_RW_COUNT)
 		count =  MAX_RW_COUNT;
 
+	android_vh_iolimit_rw_delay(file, count, READ);
+
+
 	if (file->f_op->read)
 		ret = file->f_op->read(file, buf, count, pos);
 	else if (file->f_op->read_iter)
@@ -598,6 +618,9 @@ ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_
 		return ret;
 	if (count > MAX_RW_COUNT)
 		count =  MAX_RW_COUNT;
+
+	android_vh_iolimit_rw_delay(file, count, WRITE);
+
 	file_start_write(file);
 	if (file->f_op->write)
 		ret = file->f_op->write(file, buf, count, pos);
@@ -797,6 +820,9 @@ static ssize_t do_iter_read(struct file *file, struct iov_iter *iter,
 	if (ret < 0)
 		return ret;
 
+	android_vh_iolimit_rw_delay(file, tot_len, READ);
+
+
 	if (file->f_op->read_iter)
 		ret = do_iter_readv_writev(file, iter, pos, READ, flags);
 	else
@@ -861,6 +887,9 @@ static ssize_t do_iter_write(struct file *file, struct iov_iter *iter,
 	ret = rw_verify_area(WRITE, file, pos, tot_len);
 	if (ret < 0)
 		return ret;
+
+	android_vh_iolimit_rw_delay(file, tot_len, WRITE);
+
 
 	if (file->f_op->write_iter)
 		ret = do_iter_readv_writev(file, iter, pos, WRITE, flags);

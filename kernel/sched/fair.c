@@ -7298,6 +7298,18 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
 	    likely(!task_has_idle_policy(p)))
 		goto preempt;
 
+	{
+		bool vendor_preempt = false;
+
+		trace_android_vh_dynamic_svp_preempt(p, curr, &vendor_preempt);
+		if (vendor_preempt) {
+			if (!next_buddy_marked)
+				set_next_buddy(pse);
+			goto preempt;
+		}
+	}
+
+
 	/*
 	 * Batch and idle tasks do not preempt non-idle tasks (their preemption
 	 * is driven by the tick):

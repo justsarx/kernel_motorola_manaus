@@ -79,6 +79,10 @@
 #include <trace/hooks/dmabuf.h>
 #include <trace/hooks/wakeupbypass.h>
 #include <trace/hooks/fuse.h>
+#include <trace/hooks/gpu.h>
+#include <trace/hooks/fs.h>
+#include <trace/hooks/input.h>
+
 
 /*
  * Export tracepoints that act as a bare tracehook (ie: have no trace event
@@ -89,6 +93,12 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_select_task_rq_rt);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_select_fallback_rq);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_refrigerator);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_scheduler_tick);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_uclamp_eff_value);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_dynamic_svp_preempt);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_iolimit_rw);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_gpu_context_create);
+EXPORT_TRACEPOINT_SYMBOL_GPL(android_vh_input_sync);
+
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_enqueue_task);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_dequeue_task);
 EXPORT_TRACEPOINT_SYMBOL_GPL(android_rvh_can_migrate_task);

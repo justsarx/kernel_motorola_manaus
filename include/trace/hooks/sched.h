@@ -46,6 +46,16 @@ DECLARE_HOOK(android_vh_scheduler_tick,
 	TP_PROTO(struct rq *rq),
 	TP_ARGS(rq));
 
+DECLARE_RESTRICTED_HOOK(android_rvh_uclamp_eff_value,
+	TP_PROTO(struct task_struct *p, unsigned int clamp_id,
+		 unsigned int *value),
+	TP_ARGS(p, clamp_id, value), 1);
+
+DECLARE_HOOK(android_vh_dynamic_svp_preempt,
+	TP_PROTO(struct task_struct *p, struct task_struct *curr, bool *preempt),
+	TP_ARGS(p, curr, preempt));
+
+
 DECLARE_RESTRICTED_HOOK(android_rvh_enqueue_task,
 	TP_PROTO(struct rq *rq, struct task_struct *p, int flags),
 	TP_ARGS(rq, p, flags), 1);

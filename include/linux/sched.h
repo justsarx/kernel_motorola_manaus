@@ -1830,6 +1830,12 @@ extern char *__get_task_comm(char *to, size_t len, struct task_struct *tsk);
 	__get_task_comm(buf, sizeof(buf), tsk);		\
 })
 
+#ifdef CONFIG_UCLAMP_TASK
+void android_uclamp_enable(void);
+void android_uclamp_update_active(struct task_struct *p);
+#endif
+
+
 #ifdef CONFIG_SMP
 static __always_inline void scheduler_ipi(void)
 {

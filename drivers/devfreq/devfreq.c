@@ -1077,6 +1077,129 @@ struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev,
 EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_node);
 EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_phandle);
 
+static bool devfreq_match_name(const char *name, const char *candidate)
+{
+	const char *base;
+	const char *dot;
+	size_t len;
+
+	if (!name || !candidate)
+		return false;
+	if (!strcmp(name, candidate))
+		return true;
+
+	len = strlen(name);
+	base = strrchr(candidate, '/');
+	if (base)
+		candidate = base + 1;
+	if (!strcmp(name, candidate))
+		return true;
+	if (!strncmp(candidate, name, len) && candidate[len] == '@')
+		return true;
+
+	dot = strrchr(candidate, '.');
+	return dot && !strcmp(dot + 1, name);
+}
+
+static bool devfreq_matches_name(struct devfreq *devfreq, const char *name)
+{
+	struct device *parent = devfreq->dev.parent;
+
+	if (devfreq_match_name(name, dev_name(&devfreq->dev)))
+		return true;
+
+	if (!parent)
+		return false;
+
+	if (devfreq_match_name(name, dev_name(parent)))
+		return true;
+
+	if (parent->of_node &&
+	    (devfreq_match_name(name, parent->of_node->name) ||
+	     devfreq_match_name(name, of_node_full_name(parent->of_node))))
+		return true;
+
+	return false;
+}
+
+struct devfreq *devfreq_get_by_name(const char *name)
+{
+	struct devfreq *devfreq;
+
+	if (!name || !*name)
+		return ERR_PTR(-EINVAL);
+
+	mutex_lock(&devfreq_list_lock);
+	list_for_each_entry(devfreq, &devfreq_list, node) {
+		if (devfreq_matches_name(devfreq, name)) {
+			get_device(&devfreq->dev);
+			mutex_unlock(&devfreq_list_lock);
+			return devfreq;
+		}
+	}
+	mutex_unlock(&devfreq_list_lock);
+
+	return ERR_PTR(-ENODEV);
+}
+EXPORT_SYMBOL_GPL(devfreq_get_by_name);
+
+void devfreq_put(struct devfreq *devfreq)
+{
+	if (devfreq)
+		put_device(&devfreq->dev);
+}
+EXPORT_SYMBOL_GPL(devfreq_put);
+
+static unsigned long devfreq_default_min_freq(struct devfreq *devfreq)
+{
+	struct devfreq_dev_profile *profile = devfreq->profile;
+	unsigned long min_freq = ULONG_MAX;
+	unsigned int i;
+
+	if (profile->freq_table && profile->max_state) {
+		for (i = 0; i < profile->max_state; i++) {
+			if (profile->freq_table[i] &&
+			    profile->freq_table[i] < min_freq)
+				min_freq = profile->freq_table[i];
+		}
+		if (min_freq != ULONG_MAX)
+			return min_freq;
+	}
+
+	return find_available_min_freq(devfreq);
+}
+
+int devfreq_set_min_freq(struct devfreq *devfreq, unsigned long min_freq)
+{
+	int ret = 0;
+
+	if (!devfreq)
+		return -EINVAL;
+
+	mutex_lock(&devfreq->lock);
+
+	if (min_freq) {
+		if (min_freq > devfreq->max_freq) {
+			ret = -EINVAL;
+			goto unlock;
+		}
+	} else {
+		min_freq = devfreq_default_min_freq(devfreq);
+		if (!min_freq) {
+			ret = -EINVAL;
+			goto unlock;
+		}
+	}
+
+	devfreq->min_freq = min_freq;
+	ret = update_devfreq(devfreq);
+unlock:
+	mutex_unlock(&devfreq->lock);
+	return ret;
+}
+EXPORT_SYMBOL_GPL(devfreq_set_min_freq);
+
+
 /**
  * devm_devfreq_remove_device() - Resource-managed devfreq_remove_device()
  * @dev:	the device from which to remove devfreq feature.
