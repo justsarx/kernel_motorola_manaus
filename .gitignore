@@ -19,10 +19,12 @@
 *.dt.yaml
 *.dtb
 *.dtb.S
+*.dtbo
 *.dwo
 *.elf
 *.gcno
 *.gz
+*.img
 *.i
 *.ko
 *.lex.c
